@@ -12,8 +12,6 @@
     <Grid>
         <local:DateTimePicker
             Width="300"
-            Height="30"
-            DateTimeRangeEnd="2024-07-29 15:00"
-            DateTimeRangeStart="2024-07-27 15:00" />
+            Height="30"/>
     </Grid>
 </Window>

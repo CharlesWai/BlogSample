@@ -32,7 +32,7 @@ namespace DateTimePickerSample
 
         // Using a DependencyProperty as the backing store for HoverStart.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty HoverStartProperty =
-            DependencyProperty.Register("HoverStart", typeof(DateTime), typeof(DateTimePicker), new PropertyMetadata(DateTime.Today, (d, e) =>
+            DependencyProperty.Register("HoverStart", typeof(DateTime), typeof(DateTimePicker), new PropertyMetadata(DateTime.Today.AddDays(-1), (d, e) =>
             {
                 DateTimePicker dtp = d as DateTimePicker;
                 if (e.NewValue == e.OldValue) return;
@@ -60,7 +60,7 @@ namespace DateTimePickerSample
 
         // Using a DependencyProperty as the backing store for HoverEnd.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty HoverEndProperty =
-            DependencyProperty.Register("HoverEnd", typeof(DateTime), typeof(DateTimePicker), new PropertyMetadata(DateTime.Today.AddDays(1), (d, e) =>
+            DependencyProperty.Register("HoverEnd", typeof(DateTime), typeof(DateTimePicker), new PropertyMetadata(DateTime.Today, (d, e) =>
             {
                 DateTimePicker dtp = d as DateTimePicker;
                 if (e.NewValue == e.OldValue) return;
@@ -90,7 +90,7 @@ namespace DateTimePickerSample
 
         // Using a DependencyProperty as the backing store for DateTimeRangeStart.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DateTimeRangeStartProperty =
-            DependencyProperty.Register("DateTimeRangeStart", typeof(DateTime), typeof(DateTimePicker), new PropertyMetadata(DateTime.Now, (d, e) =>
+            DependencyProperty.Register("DateTimeRangeStart", typeof(DateTime), typeof(DateTimePicker), new PropertyMetadata(DateTime.Now.AddMonths(-1), (d, e) =>
             {
                 DateTimePicker dtp = d as DateTimePicker;
                 if (e.NewValue == null) return;
@@ -119,7 +119,7 @@ namespace DateTimePickerSample
 
         // Using a DependencyProperty as the backing store for DateTimeRangeEnd.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DateTimeRangeEndProperty =
-            DependencyProperty.Register("DateTimeRangeEnd", typeof(DateTime), typeof(DateTimePicker), new PropertyMetadata(DateTime.Now.AddDays(1), (d, e) =>
+            DependencyProperty.Register("DateTimeRangeEnd", typeof(DateTime), typeof(DateTimePicker), new PropertyMetadata(DateTime.Now, (d, e) =>
             {
                 DateTimePicker dtp = d as DateTimePicker;
                 if (e.NewValue == null) return;
@@ -143,9 +143,12 @@ namespace DateTimePickerSample
         public DateTimePicker()
         {
             InitializeComponent();
-            endCalendar.DisplayDate = startCalendar.DisplayDate.AddMonths(1);
-            startCalendar.BlackoutDates.Add(new CalendarDateRange(DateTime.MinValue, DateTime.Now.AddDays(-1)));
-            endCalendar.BlackoutDates.Add(new CalendarDateRange(DateTime.MinValue, DateTime.Now.AddDays(-1)));
+            endCalendar.DisplayDate = DateTime.Today;
+            startCalendar.DisplayDate = endCalendar.DisplayDate.AddMonths(-1);
+            startCalendar.BlackoutDates.Add(new CalendarDateRange(DateTime.MinValue, DateTime.Now.AddMonths(-1).AddDays(-1)));
+            startCalendar.BlackoutDates.Add(new CalendarDateRange(DateTime.Now.AddDays(1), DateTime.MaxValue));
+            endCalendar.BlackoutDates.Add(new CalendarDateRange(DateTime.Now.AddDays(1), DateTime.MaxValue));
+            endCalendar.BlackoutDates.Add(new CalendarDateRange(DateTime.MinValue, DateTime.Now.AddMonths(-1).AddDays(-1)));
             startHours.ItemsSource = Enumerable.Range(DateTime.Now.Hour, 24 - DateTime.Now.Hour);
             startMins.ItemsSource = Enumerable.Range(DateTime.Now.Minute, 60 - DateTime.Now.Minute);
             startHours.SelectedItem = DateTime.Now.Hour;
@@ -157,6 +160,9 @@ namespace DateTimePickerSample
             IsBackgroudSelect = true;
             startCalendar.SelectedDates.AddRange(DateTimeRangeStart.Date, DateTimeRangeEnd.Date);
             endCalendar.SelectedDates.AddRange(DateTimeRangeStart.Date, DateTimeRangeEnd.Date);
+
+            this.DateTimeRangeStart = DateTime.Now.AddDays(-1);
+            this.DateTimeRangeEnd = DateTime.Now;
         }
 
         private void Calendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
